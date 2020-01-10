@@ -8,7 +8,7 @@ import { getFromApi } from "../utils/api";
 
 function showResults(results) {
   return (
-    <div className="flex flex-wrap px-2">
+    <div className="flex flex-wrap px-2 sm:px-6">
       {results.map(anime => (
         <AnimeCard key={anime.id} anime={anime} />
       ))}
@@ -72,7 +72,7 @@ export default function Index() {
 
   return (
     <div>
-      <header className="flex justify-center p-8">
+      <header className="flex flex-col pt-6 pb-4 px-4 sm:p-8">
         <DebounceInput
           onChange={e => setSearch(e.target.value)}
           onReset={e => setSearch("")}
@@ -85,9 +85,11 @@ export default function Index() {
           spellCheck="false"
         />
       </header>
-      <section className="container text-white text-center text-4xl">
+      <section className="text-white text-center text-4xl">
         {pageTitle && pageTitle.length > 0 && (
-          <h1 className="text-left font-hairline px-4 text-3xl">{pageTitle}</h1>
+          <h1 className="text-left font-hairline px-4 sm:px-8 text-3xl">
+            {pageTitle}
+          </h1>
         )}
         {containerContent}
       </section>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { getFromApi, getENTitle } from "../../../utils/api";
+import { getFromApi, getENTitle, sortAttrBy } from "../../../utils/api";
 import Loading from "../../../components/Loading";
 import EpisodeCard from "../../../components/EpisodeCard";
 import AnimeVideo from "../../../components/AnimeVideo";
@@ -22,7 +22,7 @@ export default function Anime() {
   const [pageCount, setPageCount] = React.useState(null);
   const [watchEpisode, setWatchEpisode] = React.useState(episode || null);
 
-  const fetchEpisodePages = async page => {
+  async function fetchEpisodePages(page) {
     page = !page ? 0 : page - 1;
 
     if (page > pageCount) {
@@ -34,43 +34,45 @@ export default function Anime() {
     return await getFromApi(
       `/anime/${id}/episodes?sort=-number&page[limit]=${API_LIMIT}&page[offset]=${offset}`
     );
-  };
+  }
+
+  async function fetching(page) {
+    const _new = await fetchEpisodePages(page);
+
+    setEpisodes(eps => {
+      let o = (eps || []).concat(_new);
+      return o.sort(sortAttrBy("number"));
+    });
+
+    if (page >= 0 && page < pageCount) {
+      fetching(++page);
+    }
+  }
 
   React.useEffect(() => {
     getFromApi(`/anime/${id}`).then(s => {
       setShow(s);
-      setPageCount(Math.ceil(s.attributes.episodeCount / API_LIMIT));
+      console.log(
+        Math.ceil(s.attributes.episodeCount / API_LIMIT),
+        s.attributes
+      );
+      const totalEpisodes =
+        s.attributes.episodeCount ||
+        s.attributes.totalLength / s.attributes.episodeLength;
+      setPageCount(Math.ceil(totalEpisodes / API_LIMIT));
     });
   }, []);
 
   React.useEffect(() => {
-    const fetching = async page => {
-      const _new = await fetchEpisodePages(page);
-
-      setEpisodes(eps => {
-        let o = (eps || []).concat(_new);
-        return o.sort((a, b) => {
-          if (a.attributes.number < b.attributes.number) {
-            return 1;
-          } else if (a.attributes.number > b.attributes.number) {
-            return -1;
-          }
-          return 0;
-        });
-      });
-
-      if (page >= 0 && page < pageCount) {
-        fetching(++page);
-      }
-    };
-
     let page = 1;
+    console.log(show, pageCount);
     if (show && pageCount) {
       fetching(page);
     }
   }, [show, pageCount]);
 
   React.useEffect(() => {
+    console.log(show, episodes);
     if (show !== null && episodes !== null) {
       setLoading(false);
     }
@@ -96,10 +98,10 @@ export default function Anime() {
     );
   }
 
-  const { titles, coverImage, synopsis } = show.attributes || {};
+  const { titles, coverImage, synopsis, posterImage } = show.attributes || {};
 
   return (
-    <section className="flex flex-col p-8 container mx-auto">
+    <section className="flex flex-col p-2 sm:p-8 container mx-auto">
       <div>
         <Link href="/" passHref>
           <a className="font-hairline border-b border-transparent hover:border-red-500 inline-block">
@@ -107,8 +109,11 @@ export default function Anime() {
           </a>
         </Link>
       </div>
-      <header className="my-4">
-        <img src={coverImage.large} />
+      <header className="my-4 overflow-hidden" style={{ maxHeight: "600px" }}>
+        <img
+          className="w-full object-cover"
+          src={coverImage ? coverImage.large : posterImage.original}
+        />
       </header>
 
       <div>
@@ -116,7 +121,7 @@ export default function Anime() {
         <p className="text-sm font-thin my-4">{synopsis}</p>
       </div>
 
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap -mx-2">
         {episodes.map(episode => (
           <EpisodeCard key={episode.id} episode={episode} anime={show} />
         ))}

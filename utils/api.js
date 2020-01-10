@@ -12,5 +12,14 @@ export async function getFromApi(path) {
 }
 
 export const getENTitle = titles => {
-  return titles.en_us || titles.en;
+  return titles.en_us || titles.en || titles.en_jp;
+};
+
+export const sortAttrBy = key => (a, b) => {
+  if (a.attributes[key] < b.attributes[key]) {
+    return 1;
+  } else if (a.attributes[key] > b.attributes[key]) {
+    return -1;
+  }
+  return 0;
 };
