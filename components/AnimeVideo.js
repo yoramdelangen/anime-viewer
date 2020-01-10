@@ -5,7 +5,7 @@ import Router from "next/router";
 import { SCRAPE_TOKEN } from "../utils/api";
 
 const VIDEO_URL = "https://animegg.org";
-const MEDIA_URL = "http://y-proxy-api.d/scrape?url=" + VIDEO_URL;
+const MEDIA_URL = "https://proxy.sydl.nl/scrape?url=" + VIDEO_URL;
 const ASPECT_RATIO = 16 / 9;
 
 export default function AnimeVideo({ anime, episode, info }) {
