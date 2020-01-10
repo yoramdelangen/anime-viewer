@@ -79,6 +79,8 @@ export default function Anime() {
   }, [show, episodes]);
 
   React.useEffect(() => {
+    console.log("changed", router.query.episode);
+
     setWatchEpisode(router.query.episode || null);
   }, [router.query.episode]);
 
