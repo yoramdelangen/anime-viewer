@@ -1,20 +1,22 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { getFromApi, getENTitle, sortAttrBy } from "../../../utils/api";
-import Loading from "../../../components/Loading";
-import EpisodeCard from "../../../components/EpisodeCard";
-import AnimeVideo from "../../../components/AnimeVideo";
+import { getFromApi, getENTitle, sortAttrBy } from "../../utils/api";
+import Layout from "../../components/Layout";
+import Loading from "../../components/Loading";
+import EpisodeCard from "../../components/EpisodeCard";
+import AnimeVideo from "../../components/AnimeVideo";
 import Link from "next/link";
 
 const API_LIMIT = 20;
 
 export default function Anime() {
   const router = useRouter();
-  const { id, episode } = router.query;
+  let { id, episode } = router.query;
 
   if (!id) {
     return <Loading />;
   }
+  id = id ? id[0] : id;
 
   const [isLoading, setLoading] = React.useState(true);
   const [show, setShow] = React.useState(null);
@@ -52,10 +54,6 @@ export default function Anime() {
   React.useEffect(() => {
     getFromApi(`/anime/${id}`).then(s => {
       setShow(s);
-      console.log(
-        Math.ceil(s.attributes.episodeCount / API_LIMIT),
-        s.attributes
-      );
       const totalEpisodes =
         s.attributes.episodeCount ||
         s.attributes.totalLength / s.attributes.episodeLength;
@@ -65,7 +63,6 @@ export default function Anime() {
 
   React.useEffect(() => {
     let page = 1;
-    console.log(show, pageCount);
     if (show && pageCount) {
       fetching(page);
     }
@@ -102,7 +99,7 @@ export default function Anime() {
   const { titles, coverImage, synopsis, posterImage } = show.attributes || {};
 
   return (
-    <section className="flex flex-col p-2 sm:p-8 container mx-auto">
+    <Layout title={getENTitle(titles)} className="flex flex-col p-2 sm:p-8">
       <div>
         <Link href="/" passHref>
           <a className="font-hairline border-b border-transparent hover:border-red-500 inline-block">
@@ -127,6 +124,6 @@ export default function Anime() {
           <EpisodeCard key={episode.id} episode={episode} anime={show} />
         ))}
       </div>
-    </section>
+    </Layout>
   );
 }
