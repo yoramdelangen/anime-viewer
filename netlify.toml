@@ -3,6 +3,8 @@
   command = "yarn build"
 
 [context.production]
+  bundle = true
+  minify = true
   [context.production.environment]
     YARN_VERSION = "1.21.1"
 
