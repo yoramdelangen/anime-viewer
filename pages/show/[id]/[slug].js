@@ -72,7 +72,6 @@ export default function Anime() {
   }, [show, pageCount]);
 
   React.useEffect(() => {
-    console.log(show, episodes);
     if (show !== null && episodes !== null) {
       setLoading(false);
     }

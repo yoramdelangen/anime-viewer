@@ -1,0 +1,13 @@
+[build]
+  publish = "out"
+  command = "yarn build"
+
+[context.production]
+  [context.production.environment]
+    YARN_VERSION = "1.21.1"
+
+[[redirects]]
+  from = "/*"
+  to = "/"
+  status = 200
+  force = false
