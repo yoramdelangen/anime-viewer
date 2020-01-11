@@ -1,6 +1,9 @@
 import Axios from "axios";
 
+export const API_LIMIT = 20;
+
 export const API_URL = "https://kitsu.io/api/edge";
+
 export const SCRAPE_TOKEN =
   'dnvqGHjfBk8S#tSJEGaG4$4xf*SKv&2VrK#v3&Z55ezzTDZk%r5ta?WU67&ySpb@"';
 

@@ -1,11 +1,11 @@
 import React from "react";
-import useSWR from "swr";
 import { DebounceInput } from "react-debounce-input";
 import Layout from "../components/Layout";
 import AnimeCard from "../components/AnimeCard";
 import Loading from "../components/Loading";
 import { useRouter } from "next/router";
 import { getFromApi } from "../utils/api";
+import useTrending from "../store/trending";
 
 function showResults(results) {
   return (
@@ -19,15 +19,13 @@ function showResults(results) {
 
 export default function Index() {
   const Router = useRouter();
-  const { data: trending } = useSWR("/trending/anime", getFromApi);
 
   const [isLoading, setLoading] = React.useState(true);
   const [search, setSearch] = React.useState(Router.query.s || "");
   const [shows, setShows] = React.useState([]);
+  const [trending] = useTrending();
 
-  // On initial load
   React.useEffect(() => {
-    // setTrending(trend);
     if (trending) {
       setLoading(false);
     }
@@ -36,10 +34,13 @@ export default function Index() {
   // on search change
   React.useEffect(() => {
     if (!search || search.length === 0) {
-      Router.replace({
-        pathname: Router.route,
-        query: {}
-      });
+      if (Object.values(Router.query).length > 0) {
+        // search query string
+        Router.replace({
+          pathname: Router.route,
+          query: {}
+        });
+      }
       return;
     }
 
@@ -47,7 +48,9 @@ export default function Index() {
       pathname: Router.route,
       query: { s: search }
     });
+
     setLoading(true);
+
     getFromApi("/anime?filter[text]=" + search).then(rsp => {
       setShows(rsp);
       setLoading(false);
