@@ -3,6 +3,7 @@ import Axios from "axios";
 import Loading from "./Loading";
 import Router from "next/router";
 import { SCRAPE_TOKEN } from "../utils/api";
+import Layout from "../components/Layout";
 
 const VIDEO_URL = "https://animegg.org";
 const MEDIA_URL = "https://proxy.sydl.nl/scrape?url=" + VIDEO_URL;
@@ -33,7 +34,7 @@ export default function AnimeVideo({ anime, episode, info }) {
   }, []);
 
   const handleClose = () => {
-    Router.push(document.location.pathname);
+    Router.push("/show/[...id]", document.location.pathname, { shallow: true });
   };
 
   const ButtonClose = () => (
@@ -67,9 +68,13 @@ export default function AnimeVideo({ anime, episode, info }) {
   }
 
   setTimeout(() => {
-    const videoFrame = document.getElementById("videoFrame");
+    let videoFrame = document.getElementById("videoFrame");
     function resizeContainer() {
-      const { offsetWidth, offsetHeight } = videoFrame;
+      if (!videoFrame) {
+        videoFrame = document.getElementById("videoFrame");
+      }
+
+      const { offsetWidth, offsetHeight } = videoFrame || {};
 
       if (offsetWidth > offsetHeight) {
         videoFrame.style.height = offsetWidth / ASPECT_RATIO + "px";
@@ -80,13 +85,17 @@ export default function AnimeVideo({ anime, episode, info }) {
 
     window.addEventListener("resize", resizeContainer);
     resizeContainer();
-  }, 100);
+  }, 200);
 
   const episodeDesc = info ? info.attributes.synopsis : "";
+  const episodeTitle = info ? info.attributes.canonicalTitle : "";
 
   return (
-    <div className="container mx-auto">
-      <div className="flex flex-col items-center p-10">
+    <Layout
+      className="px-10 pt-10 pb-5"
+      title={`Episode ${episode} | ${anime.attributes.canonicalTitle} | ${episodeTitle}`}
+    >
+      <div className="flex flex-col items-center">
         <ButtonClose />
 
         <iframe
@@ -97,14 +106,16 @@ export default function AnimeVideo({ anime, episode, info }) {
           onLoad={() => setLoading(false)}
         />
       </div>
-      <div className="text-left px-10">
-        <h1 className="text-3xl font-light text-gray-700">Episode {episode}</h1>
-        <h4 className="text-lg text-gray-800">
+      <div className="text-left">
+        <h1 className="text-3xl font-light text-gray-600">
+          Episode {episode} {episodeTitle ? "- " + episodeTitle : ""}
+        </h1>
+        <h4 className="text-lg text-gray-700">
           {anime.attributes.canonicalTitle}
         </h4>
 
-        <p className="text-sd font-thin text-gray-800 my-6">{episodeDesc}</p>
+        <p className="text-sd font-thin text-gray-600 my-6">{episodeDesc}</p>
       </div>
-    </div>
+    </Layout>
   );
 }

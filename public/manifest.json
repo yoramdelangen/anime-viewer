@@ -1,0 +1,21 @@
+{
+  "short_name": "AnimeViewer",
+  "name": "Anime webviewer",
+  "start_url": "/?source=pwa",
+  "background_color": "#1a202c",
+  "icons": [
+    {
+      "src": "/images/icons8-jodel-150.png",
+      "type": "image/png",
+      "sizes": "150x150"
+    },
+    {
+      "src": "/images/icons8-jodel-500.png",
+      "type": "image/png",
+      "sizes": "500x500"
+    }
+  ],
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#1a202c"
+}
