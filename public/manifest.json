@@ -3,19 +3,27 @@
   "name": "Anime webviewer",
   "start_url": "/?source=pwa",
   "background_color": "#1a202c",
+  "prefer_related_applications": true,
   "icons": [
     {
       "src": "/images/icons8-jodel-150.png",
       "type": "image/png",
-      "sizes": "150x150"
+      "sizes": "192x192"
     },
     {
       "src": "/images/icons8-jodel-500.png",
       "type": "image/png",
-      "sizes": "500x500"
+      "sizes": "512x512"
     }
   ],
+  "publicPath": "/server/",
   "display": "standalone",
+  "fingerprints": false,
+  "includeDirectory": true,
   "scope": "/",
-  "theme_color": "#1a202c"
+  "theme_color": "#1a202c",
+  "ios": {
+    "apple-mobile-web-app-title": "Anime webviewer",
+    "apple-mobile-web-app-status-bar-style": "#1a202c"
+  }
 }

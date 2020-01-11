@@ -1,9 +1,19 @@
 import React from "react";
+import OfflineSupport from "../components/OfflineSupport";
 
 import "../styles/main.css";
 
+function Container({ children }) {
+  return children;
+}
+
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return (
+    <Container>
+      <OfflineSupport />
+      <Component {...pageProps} />
+    </Container>
+  );
 }
 
 // Only uncomment this method if you have blocking data requirements for
