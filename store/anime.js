@@ -11,7 +11,6 @@ export default function useAnime(animeId) {
   useEffect(() => {
     if (anime === null) {
       getFromApi(`/${animeId}?extended=full`).then(s => {
-        console.log(s);
         setAnime(s);
       });
     }
@@ -21,7 +20,7 @@ export default function useAnime(animeId) {
     if (anime === null) {
       return;
     }
-    // store.set("anime_" + animeId, anime, 60);
+    store.set("anime_" + animeId, anime, 60);
   }, [anime]);
 
   return state;

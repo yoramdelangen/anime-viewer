@@ -7,7 +7,7 @@ import { strSlug } from "../utils/helpers";
 import Layout from "../components/Layout";
 import Animegg from "../utils/animegg";
 
-const VIDEO_URL = "//animegg.org";
+const VIDEO_URL = "//www.animegg.org";
 const MEDIA_HOST =
   process.env.NODE_ENV === "production" ? "proxy.sydl.nl" : "proxy-api.d";
 const MEDIA_URL = "https://" + MEDIA_HOST + "/scrape?url=https:" + VIDEO_URL;
@@ -34,19 +34,31 @@ async function scarpeEmbedCode(slug, episode) {
 }
 
 export default function AnimeVideo({ anime, episode, info }) {
-  const [isLoading, setLoading] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(true);
+  const [isVideoLoading, setVideoLoading] = React.useState(true);
   const [videoUrl, setVideoUrl] = React.useState(null);
-
-  // console.log(anime, episode, "info", info);
+  const [errorMessage, setError] = React.useState();
 
   React.useEffect(() => {
     (async () => {
       const slug = getEpisodeSlug(anime, true);
+      const rsp = await scarpeEmbedCode(slug, episode)
+        .catch(err => err)
+        .finally(() => setLoading(false));
 
-      const rsp = await scarpeEmbedCode(slug, episode);
+      if (!rsp.data) {
+        if (rsp.message.includes(404)) {
+          setError(
+            "Unfortunatly a 404 was thrown, the show wasn't found on animegg.org"
+          );
+        } else {
+          setError("Some error occured: " + err);
+        }
+        return;
+      }
       const _videoUrl = await rsp.data.result;
 
-      setVideoUrl("https:" + VIDEO_URL + _videoUrl);
+      setVideoUrl(VIDEO_URL + _videoUrl);
     })();
   }, []);
 
@@ -86,17 +98,20 @@ export default function AnimeVideo({ anime, episode, info }) {
 
   setTimeout(() => {
     let videoFrame = document.getElementById("videoFrame");
+    let videoContainer = document.getElementById("videoContainer");
     function resizeContainer() {
       if (!videoFrame) {
         videoFrame = document.getElementById("videoFrame");
       }
 
-      const { offsetWidth, offsetHeight } = videoFrame || {};
+      const { offsetWidth, offsetHeight } = videoContainer || {};
 
       if (offsetWidth > offsetHeight) {
+        videoContainer.style.height = offsetWidth / ASPECT_RATIO + "px";
         videoFrame.style.height = offsetWidth / ASPECT_RATIO + "px";
       } else if (offsetHeight > offsetWidth) {
         videoFrame.style.width = offsetHeight / ASPECT_RATIO + "px";
+        videoContainer.style.width = offsetHeight / ASPECT_RATIO + "px";
       }
     }
 
@@ -112,18 +127,25 @@ export default function AnimeVideo({ anime, episode, info }) {
       className="px-10 pt-10 pb-5"
       title={`Episode ${episode} | ${anime.title} | ${episodeTitle}`}
     >
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center" id="videoContainer">
         <ButtonClose />
 
-        <iframe
-          id="videoFrame"
-          frameBorder="0"
-          src={videoUrl}
-          className="w-full my-8"
-          onLoad={e => {
-            setLoading(false);
-          }}
-        />
+        {isVideoLoading && <Loading />}
+
+        {errorMessage ? (
+          <div className="text-red text-lg py-10">{errorMessage}</div>
+        ) : (
+          <iframe
+            id="videoFrame"
+            frameBorder="0"
+            src={videoUrl}
+            className={"w-full my-8" + (isVideoLoading ? " hidden" : "")}
+            onLoad={e => {
+              console.log(e);
+              setVideoLoading(false);
+            }}
+          />
+        )}
       </div>
       <div className="text-left">
         <h1 className="text-3xl font-light text-gray-600">

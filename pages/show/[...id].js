@@ -46,8 +46,6 @@ export default function Anime() {
     return <Loading />;
   }
 
-  console.log(isEpisodeLoading, watchEpisode);
-
   if (!isEpisodeLoading && watchEpisode) {
     return (
       <AnimeVideo
