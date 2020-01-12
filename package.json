@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "node server.js",
-    "build": "next build",
+    "dev": "ENV=development node server.js",
+    "build": "ENV=production next build",
     "export": "next export",
-    "start": "next start",
+    "start": "ENV=production next start",
     "postexport": "node post-export.js"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "autoprefixer": "^9.7.3",
     "axios": "^0.19.1",
     "cheerio": "^1.0.0-rc.3",
+    "lscache": "^1.3.0",
     "next": "^9.1.7",
     "next-offline": "^4.0.6",
     "postcss-loader": "^3.0.0",
@@ -23,6 +24,7 @@
     "react-debounce-input": "^3.2.2",
     "react-dom": "^16.12.0",
     "react-progressive-image": "^0.6.0",
+    "react-render-html": "^0.6.0",
     "store2": "^2.10.0",
     "swr": "^0.1.16",
     "tailwindcss": "^1.1.4"

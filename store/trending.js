@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
-import store from "store2";
+import store from "lscache";
 import { getFromApi } from "../utils/api";
 
-export default function useAnime() {
-  const stored = store("trending");
+export default function useTrending(subtype) {
+  subtype = subtype ? subtype : "watched"; // year , month , all , voted , watched
+
+  const stored = store.get("trending_" + subtype);
   const state = useState(stored || []);
   const [trending, setTrending] = state;
 
+  // in case of loading and state is empty
   useEffect(() => {
-    if (store.page("initial_trending") === null) {
-      getFromApi("/trending/anime").then(rsp => {
+    if (trending.length === 0) {
+      getFromApi("/best/" + subtype + "?type=all&extended=full").then(rsp => {
         setTrending(rsp);
-        store.page("initial_trending", true);
       });
     }
   }, []);
@@ -20,7 +22,8 @@ export default function useAnime() {
     if (trending.length === 0) {
       return;
     }
-    store.set("trending", trending);
+
+    store.set("trending_" + subtype, trending, 60);
   }, [trending]);
 
   return state;

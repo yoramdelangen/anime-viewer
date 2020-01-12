@@ -3,33 +3,50 @@ import Axios from "axios";
 import Loading from "./Loading";
 import Router from "next/router";
 import { SCRAPE_TOKEN } from "../utils/api";
+import { strSlug } from "../utils/helpers";
 import Layout from "../components/Layout";
+import Animegg from "../utils/animegg";
 
-const VIDEO_URL = "https://animegg.org";
-const MEDIA_URL = "https://proxy.sydl.nl/scrape?url=" + VIDEO_URL;
+const VIDEO_URL = "//animegg.org";
+const MEDIA_HOST =
+  process.env.NODE_ENV === "production" ? "proxy.sydl.nl" : "proxy-api.d";
+const MEDIA_URL = "https://" + MEDIA_HOST + "/scrape?url=https:" + VIDEO_URL;
 const ASPECT_RATIO = 16 / 9;
 
+// https://www.animegg.org/attack-on-titan-episode-25
+// https://www.animegg.org/shingeki-no-kyojin-episode-23
+
+function getEpisodeSlug(episode, includeEpisode) {
+  return (
+    Animegg(strSlug(episode.en_title || episode.title)) +
+    (includeEpisode ? "-episode" : "")
+  );
+}
+
+async function scarpeEmbedCode(slug, episode) {
+  const options = { headers: { "X-TOKEN": SCRAPE_TOKEN } };
+  const queryString = `&query=${encodeURIComponent(
+    "div#subbed-Animegg iframe[src]"
+  )}&attr=src`;
+
+  const url = `${MEDIA_URL}/${slug}-${episode}` + queryString;
+  return await await Axios.get(url, options);
+}
+
 export default function AnimeVideo({ anime, episode, info }) {
-  const { slug } = anime.attributes;
   const [isLoading, setLoading] = React.useState(false);
   const [videoUrl, setVideoUrl] = React.useState(null);
 
+  // console.log(anime, episode, "info", info);
+
   React.useEffect(() => {
     (async () => {
-      const options = {
-        headers: {
-          "X-TOKEN": SCRAPE_TOKEN
-        }
-      };
-      const queryString = `&query=${encodeURIComponent(
-        "div#subbed-Animegg iframe[src]"
-      )}&attr=src`;
+      const slug = getEpisodeSlug(anime, true);
 
-      const url = `${MEDIA_URL}/${slug}-episode-${episode}` + queryString;
-      const rsp = await Axios.get(url, options);
-      const videoUrl = await rsp.data.result;
+      const rsp = await scarpeEmbedCode(slug, episode);
+      const _videoUrl = await rsp.data.result;
 
-      setVideoUrl(VIDEO_URL + videoUrl);
+      setVideoUrl("https:" + VIDEO_URL + _videoUrl);
     })();
   }, []);
 
@@ -87,13 +104,13 @@ export default function AnimeVideo({ anime, episode, info }) {
     resizeContainer();
   }, 200);
 
-  const episodeDesc = info ? info.attributes.synopsis : "";
-  const episodeTitle = info ? info.attributes.canonicalTitle : "";
+  const episodeDesc = info ? info.synopsis : "";
+  const episodeTitle = info ? info.title : "";
 
   return (
     <Layout
       className="px-10 pt-10 pb-5"
-      title={`Episode ${episode} | ${anime.attributes.canonicalTitle} | ${episodeTitle}`}
+      title={`Episode ${episode} | ${anime.title} | ${episodeTitle}`}
     >
       <div className="flex flex-col items-center">
         <ButtonClose />
@@ -103,16 +120,16 @@ export default function AnimeVideo({ anime, episode, info }) {
           frameBorder="0"
           src={videoUrl}
           className="w-full my-8"
-          onLoad={() => setLoading(false)}
+          onLoad={e => {
+            setLoading(false);
+          }}
         />
       </div>
       <div className="text-left">
         <h1 className="text-3xl font-light text-gray-600">
           Episode {episode} {episodeTitle ? "- " + episodeTitle : ""}
         </h1>
-        <h4 className="text-lg text-gray-700">
-          {anime.attributes.canonicalTitle}
-        </h4>
+        <h4 className="text-lg text-gray-700">{anime.title}</h4>
 
         <p className="text-sd font-thin text-gray-600 my-6">{episodeDesc}</p>
       </div>

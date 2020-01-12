@@ -1,13 +1,14 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { getFromApi, getENTitle, sortAttrBy } from "../../utils/api";
+import Link from "next/link";
+import renderHTML from "react-render-html";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
 import EpisodeCard from "../../components/EpisodeCard";
 import AnimeVideo from "../../components/AnimeVideo";
-import Link from "next/link";
-
-const API_LIMIT = 20;
+import Image from "../../components/Image";
+import useAnime from "../../store/anime";
+import useEpisodes from "../../store/episodes";
 
 export default function Anime() {
   const router = useRouter();
@@ -18,65 +19,26 @@ export default function Anime() {
   }
   id = id ? id[0] : id;
 
+  const [show] = useAnime(id);
+  const [episodes] = useEpisodes(id);
+
   const [isLoading, setLoading] = React.useState(true);
-  const [show, setShow] = React.useState(null);
-  const [episodes, setEpisodes] = React.useState(null);
-  const [pageCount, setPageCount] = React.useState(null);
+  const [isEpisodeLoading, setEpisodeLoading] = React.useState(true);
   const [watchEpisode, setWatchEpisode] = React.useState(episode || null);
 
-  async function fetchEpisodePages(page) {
-    page = !page ? 0 : page - 1;
-
-    if (page > pageCount) {
-      return;
-    }
-
-    let offset = API_LIMIT * page;
-
-    return await getFromApi(
-      `/anime/${id}/episodes?sort=-number&page[limit]=${API_LIMIT}&page[offset]=${offset}`
-    );
-  }
-
-  async function fetching(page) {
-    const _new = await fetchEpisodePages(page);
-
-    setEpisodes(eps => {
-      let o = (eps || []).concat(_new);
-      return o.sort(sortAttrBy("number"));
-    });
-
-    if (page >= 0 && page < pageCount) {
-      fetching(++page);
-    }
-  }
-
   React.useEffect(() => {
-    getFromApi(`/anime/${id}`).then(s => {
-      setShow(s);
-      const totalEpisodes =
-        s.attributes.episodeCount ||
-        s.attributes.totalLength / s.attributes.episodeLength;
-      setPageCount(Math.ceil(totalEpisodes / API_LIMIT));
-    });
-  }, []);
-
-  React.useEffect(() => {
-    let page = 1;
-    if (show && pageCount) {
-      fetching(page);
-    }
-  }, [show, pageCount]);
-
-  React.useEffect(() => {
-    if (show !== null && episodes !== null) {
+    if (show !== null) {
       setLoading(false);
     }
-  }, [show, episodes]);
+  }, [show]);
 
   React.useEffect(() => {
-    console.log("changed", router.query.episode);
+    if (episodes !== null) {
+      setEpisodeLoading(false);
+    }
+  }, [episodes]);
 
+  React.useEffect(() => {
     setWatchEpisode(router.query.episode || null);
   }, [router.query.episode]);
 
@@ -84,22 +46,22 @@ export default function Anime() {
     return <Loading />;
   }
 
-  if (watchEpisode) {
+  console.log(isEpisodeLoading, watchEpisode);
+
+  if (!isEpisodeLoading && watchEpisode) {
     return (
       <AnimeVideo
         anime={show}
         episode={watchEpisode}
-        info={episodes.find(
-          x => x.attributes.number === parseInt(watchEpisode)
-        )}
+        info={episodes.find(x => x.episode === parseInt(watchEpisode))}
       />
     );
   }
 
-  const { titles, coverImage, synopsis, posterImage } = show.attributes || {};
+  const { en_title, title, fanart, overview } = show || {};
 
   return (
-    <Layout title={getENTitle(titles)} className="flex flex-col p-2 sm:p-8">
+    <Layout title={en_title || title} className="flex flex-col p-2 sm:p-8">
       <div>
         <Link href="/" passHref>
           <a className="font-hairline border-b border-transparent hover:border-red-500 inline-block">
@@ -108,21 +70,31 @@ export default function Anime() {
         </Link>
       </div>
       <header className="my-4 overflow-hidden" style={{ maxHeight: "600px" }}>
-        <img
+        <Image
           className="w-full object-cover"
-          src={coverImage ? coverImage.large : posterImage.original}
+          src={"fanart/" + fanart + "_medium.webp"}
         />
       </header>
 
       <div>
-        <h1 className="text-3xl font-light">{getENTitle(titles)}</h1>
-        <p className="text-sm font-thin my-4">{synopsis}</p>
+        <h1 className="text-3xl font-light">{en_title || title}</h1>
+        <p className="text-sm font-thin my-4">{renderHTML(overview)}</p>
       </div>
 
       <div className="flex flex-wrap -mx-2">
-        {episodes.map(episode => (
-          <EpisodeCard key={episode.id} episode={episode} anime={show} />
-        ))}
+        {isEpisodeLoading ? (
+          <Loading />
+        ) : (
+          episodes
+            .filter(e => e.aired)
+            .map(episode => (
+              <EpisodeCard
+                key={episode.ids.simkl_id}
+                episode={episode}
+                anime={show}
+              />
+            ))
+        )}
       </div>
     </Layout>
   );

@@ -4,14 +4,15 @@ import Layout from "../components/Layout";
 import AnimeCard from "../components/AnimeCard";
 import Loading from "../components/Loading";
 import { useRouter } from "next/router";
-import { getFromApi } from "../utils/api";
+import { getFromApi, SIMKL_KEY } from "../utils/api";
+import { getQuery } from "../utils/helpers";
 import useTrending from "../store/trending";
 
 function showResults(results) {
   return (
     <div className="flex flex-wrap">
       {results.map(anime => (
-        <AnimeCard key={anime.id} anime={anime} />
+        <AnimeCard key={anime.ids.simkl_id} anime={anime} />
       ))}
     </div>
   );
@@ -19,11 +20,18 @@ function showResults(results) {
 
 export default function Index() {
   const Router = useRouter();
-
   const [isLoading, setLoading] = React.useState(true);
   const [search, setSearch] = React.useState(Router.query.s || "");
   const [shows, setShows] = React.useState([]);
   const [trending] = useTrending();
+
+  React.useEffect(() => {
+    if (Router.query.s) {
+      setSearch(Router.query.s);
+    } else if (getQuery("s")) {
+      setSearch(getQuery("s"));
+    }
+  }, []);
 
   React.useEffect(() => {
     if (trending) {
@@ -50,8 +58,11 @@ export default function Index() {
     });
 
     setLoading(true);
-
-    getFromApi("/anime?filter[text]=" + search).then(rsp => {
+    getFromApi(
+      `/search/anime?client_id=${SIMKL_KEY}&extended=full&q=${search}`,
+      true
+    ).then(rsp => {
+      console.log(rsp);
       setShows(rsp);
       setLoading(false);
     });
