@@ -12,12 +12,15 @@ import useEpisodes from "../../store/episodes";
 
 export default function Anime() {
   const router = useRouter();
+
   let { id, episode } = router.query;
 
   if (!id) {
     return <Loading />;
   }
   id = id ? id[0] : id;
+
+  console.log(id);
 
   const [show] = useAnime(id);
   const [episodes] = useEpisodes(id);

@@ -3,8 +3,8 @@ import store from "lscache";
 import { getFromApi } from "../utils/api";
 
 export default function useAnime(animeId) {
-  const stored = null; // store.get("anime_" + animeId) || null;
-  const state = useState(stored || null);
+  const stored = store.get("anime_" + animeId) || null;
+  const state = useState(stored);
   const [anime, setAnime] = state;
 
   // in case of loading and state is empty
