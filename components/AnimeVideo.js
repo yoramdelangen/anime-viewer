@@ -11,16 +11,19 @@ const VIDEO_URL = "//www.animegg.org";
 const MEDIA_HOST =
   process.env.NODE_ENV === "production" ? "proxy.sydl.nl" : "proxy-api.d";
 const MEDIA_URL = "https://" + MEDIA_HOST + "/scrape?url=https:" + VIDEO_URL;
-const ASPECT_RATIO = 16 / 9;
+const ASPECT_RATIO = 9 / 5; // 16 / 9;
 
 // https://www.animegg.org/attack-on-titan-episode-25
 // https://www.animegg.org/shingeki-no-kyojin-episode-23
 
-function getEpisodeSlug(episode, includeEpisode) {
-  return (
-    Animegg(strSlug(episode.en_title || episode.title)) +
-    (includeEpisode ? "-episode" : "")
-  );
+function getAvailableSlugs(anime) {
+  return [anime.ids.slug, strSlug(anime.en_title), strSlug(anime.title)]
+    .filter(x => x && x.length)
+    .map(Animegg);
+}
+
+function getEpisodeSlug(slug, includeEpisode) {
+  return slug + (includeEpisode ? "-episode" : "");
 }
 
 async function scarpeEmbedCode(slug, episode) {
@@ -38,6 +41,7 @@ export default function AnimeVideo({ anime, episode, info }) {
   const [isVideoLoading, setVideoLoading] = React.useState(true);
   const [videoUrl, setVideoUrl] = React.useState(null);
   const [errorMessage, setError] = React.useState();
+  const episodeAvailableSlugs = getAvailableSlugs(anime);
 
   React.useEffect(() => {
     (async () => {

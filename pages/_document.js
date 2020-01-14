@@ -15,7 +15,12 @@ class MyDocument extends Document {
             name="viewport"
             content="initial-scale=1.0, width=device-width"
           />
+          <meta name="theme-color" content="#1a202c">
+          <meta name="mobile-web-app-capable" content="yes">
+          <meta name="apple-mobile-web-app-title" content="Anime viewer">
           <link rel="manifest" href="/manifest.json" />
+          <link rel="manifest" href="/manifest.webmanifest" />
+          <meta name="msapplication-config" content="none" />
           <link
             rel="apple-touch-icon"
             sizes="180x180"
