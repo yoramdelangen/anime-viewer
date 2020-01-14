@@ -21,10 +21,10 @@
       "sizes": "382x382"
     },
     {
-      "src": "/images/AnimeViewer.svg",
-      "type": "image/svg+xl",
+      "src": "/images/AnimeViewer.png",
+      "type": "image/png",
       "sizes": "512x512"
-    }
+    }s
   ],
   "publicPath": "/server/",
   "display": "standalone",

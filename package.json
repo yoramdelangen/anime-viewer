@@ -26,7 +26,6 @@
     "react-progressive-image": "^0.6.0",
     "react-render-html": "^0.6.0",
     "sprintf-js": "^1.1.2",
-    "store2": "^2.10.0",
     "swr": "^0.1.16",
     "tailwindcss": "^1.1.4"
   },

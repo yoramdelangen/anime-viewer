@@ -8,19 +8,24 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html>
+      <Html lang="en">
         <Head>
           <meta charSet="utf-8" />
           <meta
             name="viewport"
             content="initial-scale=1.0, width=device-width"
           />
+          <meta name="robots" content="noindex" />
           <meta name="theme-color" content="#1a202c" />
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-title" content="Anime viewer" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="manifest" href="/manifest.webmanifest" />
           <meta name="msapplication-config" content="none" />
+          <meta
+            name="description"
+            content="Watch anime without distractions."
+          />
           <link
             rel="apple-touch-icon"
             href="/apple-touch-icon.png"

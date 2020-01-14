@@ -21,7 +21,7 @@ export default ({
 
       <section className="flex-1">{children}</section>
 
-      <footer className="mt-auto pt-2 sm:pt-4 text-gray-700 font-thin text-sm flex justify-between">
+      <footer className="mt-auto pt-2 sm:pt-4 text-gray-600 font-thin text-sm flex justify-between">
         <div>{"Build with Kitsu API.s"}</div>
         <div>
           license: {license} - version: {version}
