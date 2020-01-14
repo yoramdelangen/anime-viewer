@@ -22,3 +22,15 @@ input, button, input:focus, button:focus {
 .SearchInput:focus {
   @apply bg-gray-800 border-gray-700;
 }
+.by-16\/9 {
+  padding-bottom: 56.25%
+}
+.by-4\/3 {
+  padding-bottom: 75%;
+}
+.by-9\/5 {
+  padding-bottom: 55.555555556%;
+}
+.by-21\/9 {
+  padding-bottom: 42.857142857%;
+}

@@ -20,8 +20,6 @@ export default function Anime() {
   }
   id = id ? id[0] : id;
 
-  console.log(id);
-
   const [show] = useAnime(id);
   const [episodes] = useEpisodes(id);
 
@@ -59,7 +57,14 @@ export default function Anime() {
     );
   }
 
-  const { en_title, title, fanart, overview } = show || {};
+  const { en_title, title, fanart, poster, overview } = show || {};
+
+  let pic = "fanart/" + fanart + "_medium";
+  let picClass = "";
+  if (poster) {
+    pic = "posters/" + poster + "_m";
+    picClass = " object-cover";
+  }
 
   return (
     <Layout title={en_title || title} className="flex flex-col p-2 sm:p-8">
@@ -70,10 +75,10 @@ export default function Anime() {
           </a>
         </Link>
       </div>
-      <header className="my-4 overflow-hidden" style={{ maxHeight: "600px" }}>
+      <header className="my-4 overflow-hidden relative by-16/9">
         <Image
-          className="w-full object-cover"
-          src={"fanart/" + fanart + "_medium.webp"}
+          className={"w-full h-full absolute inset-0" + picClass}
+          src={pic + ".webp"}
         />
       </header>
 

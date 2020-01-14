@@ -62,7 +62,6 @@ export default function Index() {
       `/search/anime?client_id=${SIMKL_KEY}&extended=full&q=${search}`,
       true
     ).then(rsp => {
-      console.log(rsp);
       setShows(rsp);
       setLoading(false);
     });

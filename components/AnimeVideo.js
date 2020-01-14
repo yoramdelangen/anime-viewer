@@ -6,27 +6,25 @@ import { SCRAPE_TOKEN } from "../utils/api";
 import { strSlug } from "../utils/helpers";
 import Layout from "../components/Layout";
 import Animegg from "../utils/animegg";
+import { sprintf } from "sprintf-js";
 
 const VIDEO_URL = "//www.animegg.org";
 const VIDEO_REGEX = "div#subbed-Animegg iframe[src]";
 const MEDIA_HOST =
-  process.env.NODE_ENV === "production" ? "proxy.sydl.nl" : "y-proxy-api.d";
+  process.env.NODE_ENV === "production" ? "proxy.sydl.nl" : "proxy-api.d";
 const MEDIA_URL = "https://" + MEDIA_HOST + "/scrape?url=https:" + VIDEO_URL;
-// 9/5 = 5/9*100
-// 16/9 = 9/16*100
-const ASPECT_RATIO = (9 / 16) * 100; // 16 / 9;
 
 const SCARPERS = {
   animegg: {
     url: "//www.animegg.org",
     regex: "div#subbed-Animegg iframe[src]",
-    path: "/{0}-{1}",
+    path: "{0}-{1}",
     includeEpisode: true
   },
   anime1: {
     url: "//www.anime1.com",
     regex: '".*st[2|7].anime1.com/[HorribleSubs].*.mp4.*"',
-    path: "/watch/{0}-{1}",
+    path: "watch/{0}-{1}",
     includeEpisode: true
   }
 };
@@ -36,7 +34,12 @@ const SCARPERS = {
 
 function getAvailableSlugs(anime) {
   return (
-    [anime.ids.slug, strSlug(anime.en_title || ""), strSlug(anime.title || "")]
+    [
+      anime.ids.slug,
+      anime.ids.crunchyroll,
+      strSlug(anime.en_title || ""),
+      strSlug(anime.title || "")
+    ]
       // filter undefined, null or empty strings
       .filter(x => x && x.length)
       // make unique
@@ -46,19 +49,16 @@ function getAvailableSlugs(anime) {
 }
 
 function getEpisodeSlug(slug, includeEpisode) {
-  console.log(slug, includeEpisode);
   return slug + (includeEpisode ? "-episode" : "");
 }
 
 async function scarpeEmbedCode(slug, episode) {
   const options = { headers: { "X-TOKEN": SCRAPE_TOKEN } };
   const queryString = `&query=${encodeURIComponent(VIDEO_REGEX)}&attr=src`;
-  //www.anime1.com/watch/naruto/episode-219
-  console.log("epi", episode);
-  // const path = "/{0}-{1}".format(slug, episode);
-  console.log("path", path);
-  const url = `${MEDIA_URL}/watch/${path}` + queryString;
-  console.log(url);
+
+  const path = sprintf("%s-%s", slug, episode);
+  const url = `${MEDIA_URL}/${path}` + queryString;
+
   return await await Axios.get(url, options);
 }
 
@@ -79,9 +79,8 @@ export default function AnimeVideo({ anime, episode, info }) {
   async function loadVideoUrl(nr) {
     nr = !nr ? 0 : nr;
     setAttempts(nr);
-    console.log("nr", nr);
-    const slug = getEpisodeSlug(episodeAvailableSlugs[nr], true);
 
+    const slug = getEpisodeSlug(episodeAvailableSlugs[nr], true);
     const rsp = await scarpeEmbedCode(slug, episode).catch(err => err);
 
     if (!rsp.data) {
@@ -97,6 +96,8 @@ export default function AnimeVideo({ anime, episode, info }) {
       } else {
         setError("Some error occured: " + rsp.message);
       }
+      setAttempts(++nr);
+      setLoading(false);
       return;
     }
 
@@ -157,10 +158,7 @@ export default function AnimeVideo({ anime, episode, info }) {
       <div className="flex flex-col items-center" id="videoContainer">
         <ButtonClose />
 
-        <div
-          className="relative my-8 w-full"
-          style={{ paddingBottom: ASPECT_RATIO + "%" }}
-        >
+        <div className="relative my-8 w-full by-16/9">
           {isVideoLoading && (
             <div className="absolute inset-0 flex items-center justify-center">
               <Loading />

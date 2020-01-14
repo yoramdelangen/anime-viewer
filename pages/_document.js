@@ -23,6 +23,14 @@ class MyDocument extends Document {
           <meta name="msapplication-config" content="none" />
           <link
             rel="apple-touch-icon"
+            href="/apple-touch-icon.png"
+            sizes="180x180"
+          />
+          <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+          <link rel="manifest" href="/_nuxt/manifest.40fad81b.json" />
+          <link rel="shortcut icon" href="/android-chrome-192x192.png" />
+          <link
+            rel="apple-touch-icon"
             sizes="180x180"
             href="/images/favicon/apple-touch-icon.png"
           />
