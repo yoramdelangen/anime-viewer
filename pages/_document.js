@@ -32,8 +32,7 @@ class MyDocument extends Document {
             sizes="180x180"
           />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
-          <link rel="manifest" href="/_nuxt/manifest.40fad81b.json" />
-          <link rel="shortcut icon" href="/android-chrome-192x192.png" />
+          <link rel="shortcut icon" href="/images/AnimeViewer@192x192.png" />
           <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -51,7 +50,6 @@ class MyDocument extends Document {
             sizes="16x16"
             href="/images/favicon/favicon-16x16.png"
           />
-          <link rel="manifest" href="/images/favicon/site.webmanifest" />
         </Head>
         <body>
           <Main />

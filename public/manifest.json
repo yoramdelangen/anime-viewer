@@ -1,13 +1,17 @@
 {
   "short_name": "AnimeViewer",
   "name": "Anime webviewer",
-  "start_url": "/?source=pwa",
-  "prefer_related_applications": true,
+  "start_url": "/",
   "icons": [
     {
       "src": "/images/AnimeViewer@144x144.png",
       "type": "image/png",
       "sizes": "144x144"
+    },
+    {
+      "src": "/images/AnimeViewer@192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
     },
     {
       "src": "/images/AnimeViewer@.50.png",
@@ -25,11 +29,9 @@
       "sizes": "512x512"
     }
   ],
-  "publicPath": "/server/",
   "display": "standalone",
   "fingerprints": false,
   "includeDirectory": true,
-  "scope": "/",
   "theme_color": "#1a202c",
   "background_color": "#4A5568",
   "ios": {

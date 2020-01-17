@@ -1,1 +1,2 @@
-// leave empty
+//
+console.log("load service worker");

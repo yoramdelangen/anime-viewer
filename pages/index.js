@@ -90,17 +90,19 @@ export default function Index() {
       className="pt-6 pb-4 px-4 sm:p-8"
     >
       <header className="flex flex-col mb-6">
-        <DebounceInput
-          onChange={e => setSearch(e.target.value)}
-          onReset={e => setSearch("")}
-          value={search}
-          minLength={2}
-          debounceTimeout={500}
-          className="SearchInput"
-          type="text"
-          placeholder="Search for the shows"
-          spellCheck="false"
-        />
+        <label>
+          <DebounceInput
+            onChange={e => setSearch(e.target.value)}
+            onReset={e => setSearch("")}
+            value={search}
+            minLength={2}
+            debounceTimeout={500}
+            className="SearchInput"
+            type="text"
+            placeholder="Search for the shows"
+            spellCheck="false"
+          />
+        </label>
       </header>
       <section className="text-white text-center text-4xl">
         {pageTitle && pageTitle.length > 0 && (

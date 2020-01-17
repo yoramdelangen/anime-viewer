@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ENV=development node server.js",
+    "dev": "ENV=development next dev",
     "build": "ENV=production next build",
     "export": "next export",
     "start": "ENV=production next start",
@@ -18,7 +18,7 @@
     "cheerio": "^1.0.0-rc.3",
     "lscache": "^1.3.0",
     "next": "^9.1.7",
-    "next-offline": "^4.0.6",
+    "next-offline": "5.0.0-beta.11",
     "postcss-loader": "^3.0.0",
     "react": "^16.12.0",
     "react-debounce-input": "^3.2.2",

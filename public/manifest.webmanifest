@@ -24,7 +24,7 @@
       "src": "/images/AnimeViewer.png",
       "type": "image/png",
       "sizes": "512x512"
-    }s
+    }
   ],
   "publicPath": "/server/",
   "display": "standalone",

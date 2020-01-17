@@ -10,7 +10,6 @@ function Container({ children }) {
 function MyApp({ Component, pageProps }) {
   return (
     <Container>
-      <OfflineSupport />
       <Component {...pageProps} />
     </Container>
   );
