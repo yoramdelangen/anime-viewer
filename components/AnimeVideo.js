@@ -173,6 +173,8 @@ export default function AnimeVideo({ anime, episode, info }) {
               id="videoFrame"
               frameBorder="0"
               src={videoUrl}
+              allowFullScreen
+              scrolling="no"
               className={
                 "absolute w-full h-full" + (isVideoLoading ? " hidden" : "")
               }
