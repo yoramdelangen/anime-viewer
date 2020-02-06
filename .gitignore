@@ -3,3 +3,5 @@ node_modules/
 package-lock.json
 .next/
 out/
+**/public/precache.*.js
+**/public/sw.js

@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import { withRouter } from "next/router";
 import Link from "next/link";
 import renderHTML from "react-render-html";
 import Layout from "../../components/Layout";
@@ -10,15 +10,13 @@ import Image from "../../components/Image";
 import useAnime from "../../store/anime";
 import useEpisodes from "../../store/episodes";
 
-export default function Anime() {
-  const router = useRouter();
-
-  let { id, episode } = router.query;
-
-  if (!id) {
+function Anime({ router }) {
+  if (!router.query.id) {
     return <Loading />;
   }
-  id = id ? id[0] : id;
+
+  let { id: slugs, episode } = router.query;
+  const [id] = slugs || [];
 
   const [show] = useAnime(id);
   const [episodes] = useEpisodes(id);
@@ -105,3 +103,5 @@ export default function Anime() {
     </Layout>
   );
 }
+
+export default withRouter(Anime);

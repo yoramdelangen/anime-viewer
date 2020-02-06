@@ -12,12 +12,14 @@ export default function AnimeCard({ anime }) {
       passHref
     >
       <a className="p-2 w-1/2 sm:w-1/3 md:w-1/5 lg:w-1/6 text-left cursor-pointer">
-        <Image
-          className="rounded"
-          placeholder="/images/vid.svg"
-          src={"posters/" + anime.poster + "_m.webp"}
-          alt={anime.title}
-        />
+        <div className="w-full relative" style={{ paddingBottom: "126.25%" }}>
+          <Image
+            className="rounded absolute object-cover min-w-full h-full"
+            placeholder="/images/vid.svg"
+            src={"posters/" + anime.poster + "_m.webp"}
+            alt={anime.title}
+          />
+        </div>
         <h2 className="text-sm text-gray-200 pt-2">{anime.title}</h2>
       </a>
     </Link>

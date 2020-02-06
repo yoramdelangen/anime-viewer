@@ -1,7 +1,6 @@
 const compose = require("next-compose");
 const withCSS = require("@zeit/next-css");
 const withOffline = require("next-offline");
-const withBabelMinify = require("next-babel-minify")();
 
 const withCSSConfig = {
   exportPathMap: function() {
@@ -41,6 +40,5 @@ const withOfflineConfig = {
 
 module.exports = compose([
   [withCSS, withCSSConfig],
-  [withOffline, withOfflineConfig],
-  [withBabelMinify, {}]
+  [withOffline, withOfflineConfig]
 ]);
