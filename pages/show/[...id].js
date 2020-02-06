@@ -82,6 +82,11 @@ function Anime({ router }) {
 
       <div>
         <h1 className="text-3xl font-light">{en_title || title}</h1>
+        {show.season && (
+          <div>
+            <small>Season: {show.season}</small>
+          </div>
+        )}
         <p className="text-sm font-thin my-4">{renderHTML(overview)}</p>
       </div>
 
